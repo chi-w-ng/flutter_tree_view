@@ -66,15 +66,13 @@ class ExpandNodeIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final treeNodeScope = TreeNodeScope.of(context);
-
-    return ExpandIcon(
-      size: size,
-      color: color,
-      disabledColor: disabledColor,
-      expandedColor: expandedColor,
-      padding: padding,
-      isExpanded: treeNodeScope.isExpanded,
-      onPressed: (_) => treeNodeScope.toggleExpanded(context),
-    );
+    return IconButton(
+        icon: treeNodeScope.isExpanded
+            ? Icon(Icons.arrow_drop_down_outlined)
+            : Icon(Icons.arrow_left),
+        color: color,
+        disabledColor: disabledColor,
+        padding: padding,
+        onPressed: () => treeNodeScope.toggleExpanded(context));
   }
 }

@@ -27,7 +27,7 @@ class TreeNode extends Comparable<TreeNode> {
   TreeNode({required this.id, this.label = '', this.data});
 
   /// An id to easily find this node in the Tree.
-  final String id;
+  final int id;
 
   /// The label (name, title, ...) of this node.
   ///
@@ -193,7 +193,7 @@ class TreeNode extends Comparable<TreeNode> {
   /// Starting from this node, searches the subtree
   /// looking for a node id that match [id],
   /// returns `null` if no node was found with the given [id].
-  TreeNode? find(String id) => nullableDescendants.firstWhere(
+  TreeNode? find(int id) => nullableDescendants.firstWhere(
         (descendant) => descendant == null ? false : descendant.id == id,
         orElse: () => null,
       );

@@ -1,5 +1,6 @@
 import 'dart:collection' show UnmodifiableListView;
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 
 import 'tree_node.dart';
@@ -77,11 +78,11 @@ class TreeViewController extends TreeViewControllerBase with ChangeNotifier {
   final void Function(TreeNode node)? onAboutToExpand;
 
   /// Cache to avoid searching multiple times for the same node.
-  late final _searchedNodesCache = <String, TreeNode>{};
+  late final _searchedNodesCache = <int, TreeNode>{};
 
   /// Starting from [rootNode], searches the subtree looking for a node id that
   /// match [id], returns `null` if no node was found with the given [id].
-  TreeNode? find(String id) {
+  TreeNode? find(int id) {
     final cachedNode = _searchedNodesCache[id];
 
     if (cachedNode != null) {
@@ -100,7 +101,7 @@ class TreeViewController extends TreeViewControllerBase with ChangeNotifier {
   // * ~~~~~~~~~~ INTERNAL REFRESH ~~~~~~~~~~ *
 
   /// A map that keeps track of which [TreeNode]'s widget needs to be rebuilt.
-  late final _nodesThatShouldRefresh = <String, bool>{};
+  late final _nodesThatShouldRefresh = <int, bool>{};
 
   /// Checks if the [TreeNode] with [id] needs to be refreshed (update lines, ...).
   ///
@@ -110,10 +111,10 @@ class TreeViewController extends TreeViewControllerBase with ChangeNotifier {
   /// This is currently only used to update the lines of a node when it's sibling
   /// list changes. (If nodes are kept expanded when a new sibling is added,
   /// the lines are not updated and the new node lines are not connected.)
-  bool shouldRefresh(String id) => _nodesThatShouldRefresh[id] ?? false;
+  bool shouldRefresh(int id) => _nodesThatShouldRefresh[id] ?? false;
 
   /// Removes [id] from the map of nodes that needs refresh.
-  void nodeRefreshed(String id) => _nodesThatShouldRefresh.remove(id);
+  void nodeRefreshed(int id) => _nodesThatShouldRefresh.remove(id);
 
   // * ~~~~~~~~~~ EXPAND/COLLAPSE METHODS ~~~~~~~~~~ *
 
@@ -223,14 +224,14 @@ class TreeViewControllerBase {
   /// [ASCII](http://www.asciitable.com/) formatted.
   final bool useBinarySearch;
 
-  late final _expandedNodes = <String, bool>{};
+  late final _expandedNodes = <int, bool>{};
 
   /// The list of node id's that are currently expanded in the [TreeView].
-  UnmodifiableListView<String> get expandedNodes {
+  UnmodifiableListView<int> get expandedNodes {
     return UnmodifiableListView(_expandedNodes.keys);
   }
 
-  late final _visibleNodesMap = <String, bool>{};
+  late final _visibleNodesMap = <int, bool>{};
 
   /// The [TreeNode] that will store all top level nodes.
   ///
@@ -248,10 +249,10 @@ class TreeViewControllerBase {
   // * ~~~~~~~~~~ HELPER METHODS ~~~~~~~~~~ *
 
   /// Verifies if the [TreeNode] with [id] is expanded.
-  bool isExpanded(String id) => _expandedNodes[id] ?? false;
+  bool isExpanded(int id) => _expandedNodes[id] ?? false;
 
   /// Verifies if the [TreeNode] with [id] is visible.
-  bool isVisible(String id) => _visibleNodesMap[id] ?? false;
+  bool isVisible(int id) => _visibleNodesMap[id] ?? false;
 
   /// Returns the node at [index] of [visibleNodes].
   TreeNode nodeAt(int index) => _visibleNodes[index];
