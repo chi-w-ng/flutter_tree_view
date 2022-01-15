@@ -1,9 +1,9 @@
 import 'dart:collection' show UnmodifiableListView;
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-
 import 'tree_node.dart';
+
+// ignore: public_member_api_docs
+typedef NodeExpandCallBack = void Function(TreeNode node);
 
 // TODO: |
 //* Perhaps it'd be easy to setup an "indexOfNodeMap" to store node's index
@@ -75,7 +75,7 @@ class TreeViewController extends TreeViewControllerBase with ChangeNotifier {
   ///
   /// Make sure this callback is synchronous, if you need to add child nodes
   /// asynchronously, use [refreshNode] instead.
-  final void Function(TreeNode node)? onAboutToExpand;
+  NodeExpandCallBack? onAboutToExpand;
 
   /// Cache to avoid searching multiple times for the same node.
   late final _searchedNodesCache = <int, TreeNode>{};
@@ -213,7 +213,7 @@ class TreeViewControllerBase {
     required this.rootNode,
     this.useBinarySearch = false,
   }) {
-    _populateInitialNodes();
+    populateInitialNodes();
   }
 
   /// Whether [TreeViewControllerBase.indexOf] should use flutter's [binarySearch]
@@ -382,19 +382,27 @@ class TreeViewControllerBase {
     _visibleNodesMap.clear();
     _expandedNodes.clear();
 
-    _populateInitialNodes();
+    populateInitialNodes();
 
     previouslyExpandedNodes?.forEach(expandNode);
   }
 
   /// Adds the children of [rootNode] to [_visibleNodes].
-  void _populateInitialNodes() {
+  void populateInitialNodes() {
     rootNode.children.forEach((child) {
       _visibleNodes.add(child);
       _visibleNodesMap[child.id] = true;
     });
 
     _expandedNodes[rootNode.id] = true;
+  }
+
+  /// Adds the children of [node] to [_visibleNodes].
+  void populateDescendantNodes(TreeNode node) {
+    node.children.forEach((child) {
+      _visibleNodes.add(child);
+      _visibleNodesMap[child.id] = true;
+    });
   }
 
   /// No node with `parent == null` should be displayed on the tree.

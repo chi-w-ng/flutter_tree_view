@@ -17,7 +17,7 @@ class AppController with ChangeNotifier {
   Future<void> init() async {
     if (_isInitialized) return;
 
-    final rootNode = TreeNode(id: kRootId);
+    final rootNode = TreeNode(id: 0);
     generateSampleTree(rootNode);
 
     treeController = TreeViewController(
@@ -29,19 +29,19 @@ class AppController with ChangeNotifier {
 
   //* == == == == == TreeView == == == == ==
 
-  late final Map<String, bool> _selectedNodes = {};
+  late final Map<int, bool> _selectedNodes = {};
 
-  bool isSelected(String id) => _selectedNodes[id] ?? false;
+  bool isSelected(int id) => _selectedNodes[id] ?? false;
 
-  void toggleSelection(String id, [bool? shouldSelect]) {
+  void toggleSelection(int id, [bool? shouldSelect]) {
     shouldSelect ??= !isSelected(id);
     shouldSelect ? _select(id) : _deselect(id);
 
     notifyListeners();
   }
 
-  void _select(String id) => _selectedNodes[id] = true;
-  void _deselect(String id) => _selectedNodes.remove(id);
+  void _select(int id) => _selectedNodes[id] = true;
+  void _deselect(int id) => _selectedNodes.remove(id);
 
   void selectAll([bool select = true]) {
     if (select) {
@@ -114,33 +114,45 @@ class AppControllerScope extends InheritedWidget {
   bool updateShouldNotify(AppControllerScope oldWidget) => false;
 }
 
+int currentNodeId = 0;
 void generateSampleTree(TreeNode parent) {
-  final childrenIds = kDataSample[parent.id];
-  if (childrenIds == null) return;
-
-  parent.addChildren(
-    childrenIds.map(
-      (String childId) => TreeNode(id: childId, label: 'Sample Node'),
-    ),
-  );
+  final depth = parent.depth;
+  if (depth >= depthLimit) {
+    return;
+  }
+  for (final alph in alphebet) {
+    parent.addChild(
+        TreeNode(id: ++currentNodeId, label: '$alph$currentNodeId$depth'));
+  }
   parent.children.forEach(generateSampleTree);
 }
 
-const String kRootId = 'Root';
-
-const Map<String, List<String>> kDataSample = {
-  kRootId: ['A', 'B', 'C', 'D', 'E', 'F'],
-  'A': ['A 1', 'A 2'],
-  'A 2': ['A 2 1'],
-  'B': ['B 1', 'B 2', 'B 3'],
-  'B 1': ['B 1 1'],
-  'B 1 1': ['B 1 1 1', 'B 1 1 2'],
-  'B 2': ['B 2 1'],
-  'B 2 1': ['B 2 1 1'],
-  'C': ['C 1', 'C 2', 'C 3', 'C 4'],
-  'C 1': ['C 1 1'],
-  'D': ['D 1'],
-  'D 1': ['D 1 1'],
-  'E': ['E 1'],
-  'F': ['F 1', 'F 2'],
-};
+const depthLimit = 3;
+const alphebet = <String>[
+  'A',
+  'B',
+  'C',
+  'D',
+  'E',
+  'F',
+  'G',
+  'H',
+  'I',
+  'J',
+  'K',
+  'L',
+  'M',
+  'N',
+  'O',
+  'P',
+  'Q',
+  'R',
+  'S',
+  'T',
+  'U',
+  'V',
+  'W',
+  'X',
+  'Y',
+  'Z'
+];

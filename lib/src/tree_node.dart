@@ -79,15 +79,16 @@ class TreeNode extends Comparable<TreeNode> {
   ///
   /// If [child]'s `parent != null`, it will be removed from the children of
   /// it's old parent before being added to this.
-  void addChild(TreeNode child) {
+  bool addChild(TreeNode child) {
     // A node can't be neither child of its children nor parent of itself.
-    if (child == parent || child == this) return;
+    if (child == parent || child == this) return false;
 
     child.parent?.removeChild(child);
 
     child._parent = this;
 
-    _children.add(child);
+    final added = _children.add(child);
+    return added;
   }
 
   /// Adds a list of children to this node.

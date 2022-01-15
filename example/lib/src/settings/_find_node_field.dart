@@ -55,7 +55,8 @@ class __FindNodeFieldState extends State<_FindNodeField> {
   }
 
   void _submitted() {
-    final id = controller.text.trim();
+    final selected = controller.text.trim();
+    final id = int.parse(selected);
     final appController = AppController.of(context);
     final node = appController.treeController.find(id);
 

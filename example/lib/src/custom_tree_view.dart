@@ -20,7 +20,7 @@ class _CustomTreeViewState extends State<CustomTreeView> {
       valueListenable: appController.treeViewTheme,
       builder: (_, treeViewTheme, __) {
         return Scrollbar(
-          isAlwaysShown: false,
+          isAlwaysShown: true,
           child: TreeView(
             controller: appController.treeController,
             theme: treeViewTheme,

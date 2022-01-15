@@ -35,7 +35,7 @@ class _NodeActionsChipState extends State<_NodeActionsChip> {
         onPressed: () => _menu?.showButtonMenu(),
         backgroundColor: const Color(0x331565c0),
         label: Text(
-          nodeScope.node.id,
+          nodeScope.node.id.toString(),
           style: const TextStyle(
             color: _kDarkBlue,
             fontWeight: FontWeight.w600,

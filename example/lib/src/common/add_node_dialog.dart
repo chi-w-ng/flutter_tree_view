@@ -19,18 +19,20 @@ Future<void> showAddNodeDialog(BuildContext context, [TreeNode? node]) async {
     formData = await showModalBottomSheet<FormData>(
       enableDrag: false,
       context: context,
-      builder: (_) => AddNodeDialog(parentLabel: _node.id),
+      builder: (_) => AddNodeDialog(parentLabel: _node.id.toString()),
     );
   } else {
     formData = await showDialog<FormData>(
       context: context,
       builder: (_) => Dialog(
-        child: AddNodeDialog(parentLabel: _node.id),
+        child: AddNodeDialog(parentLabel: _node.id.toString()),
       ),
     );
   }
   if (formData != null) {
-    _node.addChild(TreeNode(id: formData.id, label: formData.label));
+    final strId = formData.id;
+    final id = int.tryParse(strId);
+    _node.addChild(TreeNode(id: id ?? 1000, label: formData.label));
 
     if (_node.isRoot) {
       treeController.reset(keepExpandedNodes: true);

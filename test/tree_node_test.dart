@@ -8,9 +8,9 @@ void main() {
   late TreeNode node2;
 
   setUp(() {
-    root = TreeNode(id: '-1');
-    node1 = TreeNode(id: '1');
-    node2 = TreeNode(id: '2');
+    root = TreeNode(id: -1);
+    node1 = TreeNode(id: 1);
+    node2 = TreeNode(id: 2);
   });
 
   group('Tests for children -', () {
@@ -142,8 +142,8 @@ void main() {
     late TreeNode node21;
 
     setUp(() {
-      node11 = TreeNode(id: '1.1');
-      node21 = TreeNode(id: '2.1');
+      node11 = TreeNode(id: 11);
+      node21 = TreeNode(id: 21);
 
       node1.addChild(node11);
       node2.addChild(node21);
@@ -254,8 +254,8 @@ void main() {
       late TreeNode grandChildNode2;
 
       setUp(() {
-        grandChildNode1 = TreeNode(id: '1-1');
-        grandChildNode2 = TreeNode(id: '1-2');
+        grandChildNode1 = TreeNode(id: 11);
+        grandChildNode2 = TreeNode(id: 12);
 
         root.addChildren([node1, node2]);
         node1.addChildren([grandChildNode1, grandChildNode2]);
@@ -329,7 +329,7 @@ void main() {
         'Should return null When called on root with id = 3.',
         () {
           root.addChildren([node1, node2]);
-          expect(root.find('3'), isNull);
+          expect(root.find(3), isNull);
         },
       );
       test(
@@ -337,8 +337,8 @@ void main() {
         'When called on root with id = 1, id = 2 respectively.',
         () {
           root.addChildren([node1, node2]);
-          expect(root.find('1'), node1);
-          expect(root.find('2'), node2);
+          expect(root.find(1), node1);
+          expect(root.find(2), node2);
         },
       );
       test(
@@ -347,8 +347,8 @@ void main() {
         () {
           root.addChild(node1);
           node1.addChild(node2);
-          expect(root.find('2'), node2);
-          expect(node1.find('2'), node2);
+          expect(root.find(2), node2);
+          expect(node1.find(2), node2);
         },
       );
     });

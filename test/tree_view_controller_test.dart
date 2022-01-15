@@ -15,13 +15,13 @@ void main() {
   late TreeViewControllerBase controller;
 
   setUp(() {
-    root = TreeNode(id: '-1');
-    node1 = TreeNode(id: '1');
-    node11 = TreeNode(id: '11');
-    node12 = TreeNode(id: '12');
-    node121 = TreeNode(id: '121');
-    node2 = TreeNode(id: '2');
-    node21 = TreeNode(id: '21');
+    root = TreeNode(id: -1);
+    node1 = TreeNode(id: 1);
+    node11 = TreeNode(id: 11);
+    node12 = TreeNode(id: 12);
+    node121 = TreeNode(id: 121);
+    node2 = TreeNode(id: 2);
+    node21 = TreeNode(id: 21);
 
     node2.addChild(node21);
     node12.addChild(node121);
@@ -163,7 +163,7 @@ void main() {
     () {
       controller.expandNode(node1);
 
-      final newNode = TreeNode(id: 'NewNode');
+      final newNode = TreeNode(id: 100);
       root.addChild(newNode);
 
       expect(controller.visibleNodes, [node1, node11, node12, node2]);
@@ -181,7 +181,7 @@ void main() {
     () {
       controller.expandNode(node1);
 
-      final newNode = TreeNode(id: 'NewNode');
+      final newNode = TreeNode(id: 100);
       root.addChild(newNode);
 
       expect(controller.visibleNodes, [node1, node11, node12, node2]);
