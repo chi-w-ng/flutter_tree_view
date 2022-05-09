@@ -122,11 +122,11 @@ class TreeViewController extends TreeViewControllerBase with ChangeNotifier {
   ///
   /// If the ancestors of [node] are collapsed, it will expand them too.
   @override
-  void expandNode(TreeNode node) {
+  void expandNode(TreeNode node, {bool notify = true}) {
     onAboutToExpand?.call(node);
 
-    super.expandNode(node);
-    notifyListeners();
+    super.expandNode(node, notify: notify);
+    if (notify) notifyListeners();
   }
 
   /// Expands [node] and every descendant node.
@@ -147,9 +147,9 @@ class TreeViewController extends TreeViewControllerBase with ChangeNotifier {
 
   /// Collapses [node] and it's subtree.
   @override
-  void collapseNode(TreeNode node) {
-    super.collapseNode(node);
-    notifyListeners();
+  void collapseNode(TreeNode node, {bool notify = true}) {
+    super.collapseNode(node, notify: notify);
+    if (notify) notifyListeners();
   }
 
   /// Expands every node in the tree.
@@ -179,15 +179,17 @@ class TreeViewController extends TreeViewControllerBase with ChangeNotifier {
   /// Set [keepExpandedNodes] to `true` if you want to preserve the expansion
   /// state of the subtree of [node].
   @override
-  void refreshNode(TreeNode node, {bool keepExpandedNodes = false}) {
+  void refreshNode(TreeNode node,
+      {bool keepExpandedNodes = false, bool notify = true}) {
     if (node.hasChildren) {
       node.descendants
           .where((descendant) => isVisible(descendant.id))
           .forEach((child) => _nodesThatShouldRefresh[child.id] = true);
     }
     _nodesThatShouldRefresh[node.id] = true;
-    super.refreshNode(node, keepExpandedNodes: keepExpandedNodes);
-    notifyListeners();
+    super.refreshNode(node,
+        keepExpandedNodes: keepExpandedNodes, notify: notify);
+    if (notify) notifyListeners();
   }
 
   /// Resets the entire state of this controller and populates [visibleNodes]
@@ -195,9 +197,9 @@ class TreeViewController extends TreeViewControllerBase with ChangeNotifier {
   ///
   /// Useful when a top level node needs to be deleted.
   @override
-  void reset({bool keepExpandedNodes = false}) {
+  void reset({bool keepExpandedNodes = false, bool notify = true}) {
     super.reset(keepExpandedNodes: keepExpandedNodes);
-    notifyListeners();
+    if (notify) notifyListeners();
   }
 }
 
@@ -274,7 +276,7 @@ class TreeViewControllerBase {
   ///
   /// If the path from root to [node] has collapsed nodes, it will expand them too.
   @mustCallSuper
-  void expandNode(TreeNode node) {
+  void expandNode(TreeNode node, {bool notify = true}) {
     if (isExpanded(node.id)) return;
 
     if (!node.isRoot && !isExpanded(node.parent!.id)) {
@@ -300,7 +302,7 @@ class TreeViewControllerBase {
 
   /// Collapses [node] and every descendant in its subtree.
   @mustCallSuper
-  void collapseNode(TreeNode node) {
+  void collapseNode(TreeNode node, {bool notify = true}) {
     if (!isExpanded(node.id)) return;
 
     _expandedNodes.remove(node.id);
@@ -344,8 +346,11 @@ class TreeViewControllerBase {
   /// Set [keepExpandedNodes] to `true` if you want to preserve the expansion
   /// state of the subtree of [node].
   @mustCallSuper
-  void refreshNode(TreeNode node, {bool keepExpandedNodes = false}) {
-    if (node == rootNode) return reset(keepExpandedNodes: keepExpandedNodes);
+  void refreshNode(TreeNode node,
+      {bool keepExpandedNodes = false, bool notify = true}) {
+    if (node == rootNode) {
+      return reset(keepExpandedNodes: keepExpandedNodes, notify: notify);
+    }
 
     if (!isExpanded(node.id)) return;
 
@@ -357,11 +362,14 @@ class TreeViewControllerBase {
           .toList(growable: false);
     }
 
-    collapseNode(node);
+    collapseNode(node, notify: notify);
     _pruneDirtyNodes();
-    expandNode(node);
-
-    previouslyExpandedNodes?.forEach(expandNode);
+    expandNode(node, notify: notify);
+    if (null != previouslyExpandedNodes) {
+      for (var i = 0; i < previouslyExpandedNodes.length; ++i) {
+        expandNode(previouslyExpandedNodes[i], notify: notify);
+      }
+    }
   }
 
   /// Resets the entire state of this controller and populates [visibleNodes]
@@ -369,7 +377,7 @@ class TreeViewControllerBase {
   ///
   /// Useful when a top level node needs to be deleted.
   @mustCallSuper
-  void reset({bool keepExpandedNodes = false}) {
+  void reset({bool keepExpandedNodes = false, bool notify = true}) {
     List<TreeNode>? previouslyExpandedNodes;
 
     if (keepExpandedNodes) {
