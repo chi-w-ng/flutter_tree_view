@@ -15,6 +15,8 @@ import 'lines_painter.dart' show TreeLine;
 ///   Use either `removeChild` or `clearChildren` to remove any child from this
 /// node, both methods set children's parent property to `null`.
 class TreeNode extends Comparable<TreeNode> {
+  /// largest currently used id
+  /// for tree node.
   static int globalId = 0;
 
   /// Creates a [TreeNode].

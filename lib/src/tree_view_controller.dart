@@ -198,8 +198,16 @@ class TreeViewController extends TreeViewControllerBase with ChangeNotifier {
   /// Useful when a top level node needs to be deleted.
   @override
   void reset({bool keepExpandedNodes = false, bool notify = true}) {
-    super.reset(keepExpandedNodes: keepExpandedNodes);
+    super.reset(keepExpandedNodes: keepExpandedNodes, notify: notify);
     if (notify) notifyListeners();
+  }
+
+  /// cleanup from control the given [node].
+  void cleanupNode(TreeNode node) {
+    _visibleNodes.remove(node);
+    _visibleNodesMap.remove(node.id);
+    _expandedNodes.remove(node.id);
+    _searchedNodesCache.remove(node.id);
   }
 }
 
@@ -391,8 +399,11 @@ class TreeViewControllerBase {
     _expandedNodes.clear();
 
     populateInitialNodes();
-
-    previouslyExpandedNodes?.forEach(expandNode);
+    if (null != previouslyExpandedNodes) {
+      for (var node in previouslyExpandedNodes) {
+        expandNode(node, notify: notify);
+      }
+    }
   }
 
   /// Adds the children of [rootNode] to [_visibleNodes].
