@@ -408,18 +408,22 @@ class TreeViewControllerBase {
 
   /// Adds the children of [rootNode] to [_visibleNodes].
   void populateInitialNodes() {
+    var index = indexOf(rootNode);
     rootNode.children.forEach((child) {
-      _visibleNodes.add(child);
+      index++;
+      _visibleNodes.insert(index, child);
       _visibleNodesMap[child.id] = true;
     });
-
     _expandedNodes[rootNode.id] = true;
   }
 
   /// Adds the children of [node] to [_visibleNodes].
   void populateDescendantNodes(TreeNode node) {
-    node.children.forEach((child) {
-      _visibleNodes.add(child);
+    _expandedNodes[node.id] = true;
+    var index = indexOf(node);
+    node.children.forEach((TreeNode child) {
+      index++;
+      _visibleNodes.insert(index, child);
       _visibleNodesMap[child.id] = true;
     });
   }
